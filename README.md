@@ -1,2 +1,2 @@
 # Ai-TechSkill-Recommeder-and-Tutor
-The model uses gemini 2.0 flash to recommend and teach users any tech skill of their choice
+The model uses gemini 2.0 flash to recommend and teach users any tech skill of their choice.
