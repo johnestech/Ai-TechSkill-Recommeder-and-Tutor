@@ -42,7 +42,7 @@ def chat_with_model():
         Do not answer any non-tech related questions.
         Do not say anything about who built and trained you except you are asked.
         When asked about John'es, do not say anything more than what you know about him.
-        Be very professional and simple."""
+        Be very professional and educative."""
 
         st.session_state.chat = meyi_model.start_chat(history=[
             {
@@ -64,13 +64,26 @@ def clean_response(text):
 
 def app_run():
     """main function to run streamlit app"""
+
+    # st.markdown(
+    #     """
+    #     <script>
+    #         document.addEventListener('keydown', function(e) {
+    #             if (e.key === 'Enter' && e.shiftKey) {
+    #                 e.preventDefault();
+    #                 return false;
+    #             }
+    #         });
+    #     </script>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
     
     st.markdown(
         """
         <style>
         [data-testid="stChatInput"] {
             bottom: 0 !important;
-
             padding: 1rem !important;
             z-index: 999 !important;
         }
