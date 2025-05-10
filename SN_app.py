@@ -7,17 +7,17 @@ import re
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Model configuration
+# Model congiguration
 model_config = {
-    "temperature": 0.7,  # Lowered from 1.2 for faster, more focused responses
-    "top_k": 40,        # Reduced from 64
-    "top_p": 0.8,      # Slightly reduced
-    "max_output_tokens": 2048  # Reduced from 9600 for faster responses
+    "temperature": 1.2,
+    "top_k": 64,
+    "top_p":0.84,
+    "max_output_tokens": 9600
 }
 
 # Model initialization
 meyi_model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash",
+    model_name= "gemini-2.0-flash",
     generation_config=model_config
 )
 
@@ -29,27 +29,27 @@ def chat_with_model():
         st.session_state.messages = []
 
     if "chat" not in st.session_state:
-        system_prompt = """Your name is Meyi.
+        system_prompt = """Your name is Meyi built and trained by John'es.
+        John'es is a Machine learning and AI engineer/tutor.
         You're a tech expert and tutor.
-        Keep your responses concise and focused.
-        You're to help people begin their tech journey, most of which are completely beginners and have no technical knowledge.
-        Never refer to questions you haven't actually asked in the current conversation.
+        You're to help people begin thier tech journey, most of which are completely beginners and have no technical knowledge.
+        Never refer to questions you havent actually asked in the current conversation.
         Always start fresh with each user interaction.
         You're to use very simple terms to help them understand.
-        If they are not sure what tech skill to learn, ask them 3-4 focused questions to understand their interests and recommend the best tech skill.
-        If they have a tech skill or pick one, give them clear, concise step-by-step instructions.
-        Do not answer any non-tech related questions."""
+        If they are not sure what tech skill to learn, ask them several questions (at least 8) to get to understand thier realworld interest and recommed the best tech skill to them.
+        If they have a tech skill or pick one, you're to begin from the very basic with step by step instructions and guide on it.
+        You're an expert teach them like they only depend on you.
+        Do not answer any non-tech related questions.
+        Do not say anything about who built and trained you except you are asked.
+        When asked about John'es, do not say anything more than what you know about him.
+        Be very professional and educative."""
 
-        try:
-            st.session_state.chat = meyi_model.start_chat(history=[
-                {
-                    "role": "user",
-                    "parts": [system_prompt]
-                }
-            ])
-        except Exception as e:
-            st.error("Failed to initialize chat. Please try refreshing the page.")
-            return
+        st.session_state.chat = meyi_model.start_chat(history=[
+            {
+                "role": "user",
+                "parts": [system_prompt]
+            }
+        ])
 
 
 def clean_response(text):
@@ -178,22 +178,14 @@ def app_run():
     if user_input:
         st.session_state.messages.append(("user", user_input))
         try:
-            with st.spinner("Processing your request..."):
-                # Add a timeout using @st.cache_data
-                @st.cache_data(ttl=15)  # 15 second timeout
-                def get_model_response(prompt):
-                    return st.session_state.chat.send_message(prompt)
-                
-                response = get_model_response(user_input)
+            with st.spinner("Thinking..."):
+                response = st.session_state.chat.send_message(user_input)
                 if response and response.text:
                     cleaned_response = clean_response(response.text)
                     st.session_state.messages.append(("assistant", cleaned_response))
                     st.rerun()
-                else:
-                    st.error("Failed to get a response. Please try again.")
         except Exception as e:
-            st.error("Response timed out or an error occurred. Please try asking again with a shorter question.")
-            print(f"Error details: {str(e)}")
+            st.error(f"An Error occurred: {str(e)}")
 
 if __name__ == "__main__":
     app_run()
